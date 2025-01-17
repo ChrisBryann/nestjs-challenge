@@ -32,6 +32,9 @@ export class AuthService {
       (user) => user.provider === 'auth0' && user.provider_id === id,
     );
 
+    console.log(user);
+    
+
     if (!user) {
       // add user to database if user doesn't exist
       user = await this.usersService.add({
