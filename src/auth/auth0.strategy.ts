@@ -24,24 +24,24 @@ export class Auth0Strategy extends PassportStrategy(Strategy, 'auth0') {
     });
   }
 
-  async validate(
-    _accessToken: string,
-    _refreshToken: string,
-    profile: Profile,
-  ): Promise<any> {
-    console.log('calling validate');
+  // async validate(
+  //   _accessToken: string,
+  //   _refreshToken: string,
+  //   profile: Profile,
+  // ): Promise<any> {
+  //   console.log('calling validate');
     
-    const user = await this.authService.validateAuth0User({
-      username: profile.displayName,
-      id: profile.user_id,
-    });
+  //   const user = await this.authService.validateAuth0User({
+  //     username: profile.displayName,
+  //     id: profile.user_id,
+  //   });
 
-    console.log(`access token: ${_accessToken}`);
-    console.log(`refresh token: ${_refreshToken}`);
+  //   console.log(`access token: ${_accessToken}`);
+  //   console.log(`refresh token: ${_refreshToken}`);
 
-    return {
-      ...user,
-      access_token: _accessToken,
-    };
-  }
+  //   return {
+  //     ...user,
+  //     access_token: _accessToken,
+  //   };
+  // }
 }

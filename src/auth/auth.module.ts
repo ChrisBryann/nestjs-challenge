@@ -8,7 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { Auth0Strategy } from './auth0.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { expressJwtSecret, passportJwtSecret } from 'jwks-rsa';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
@@ -30,8 +29,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     LocalStrategy,
     Auth0Strategy,
     JwtStrategy,
-    UsersService,
+    // UsersService,
   ],
-  exports: [PassportModule, AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

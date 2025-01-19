@@ -17,10 +17,10 @@ import { MongooseModule } from '@nestjs/mongoose';
     UsersModule,
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get('MONGODB_URI')
+        uri: configService.get('MONGODB_URI'),
       }),
-      inject: [ConfigService]
-    })
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

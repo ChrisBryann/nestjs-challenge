@@ -27,14 +27,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   // validate(payload: unknown): unknown {
   //   return payload;
   // }
-  async validate(username: string, password: string): Promise<any> {
-    // Call the AuthService to validate the user's credentials
-    const user = await this.authService.validateUser(username, password);
-    // If the user is not found or the password doesn't match, throw UnauthorizedException
-    if(!user){
-      throw new UnauthorizedException();
-    }
+  // async validate(username: string, password: string): Promise<any> {
+  //   // Call the AuthService to validate the user's credentials
+  //   const user = await this.authService.validateUser(username, password);
+  //   // If the user is not found or the password doesn't match, throw UnauthorizedException
+  //   if(!user){
+  //     throw new UnauthorizedException();
+  //   }
 
-    return user;
-  }
+  //   return user;
+  // }
 }

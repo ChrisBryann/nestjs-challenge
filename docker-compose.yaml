@@ -5,15 +5,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # target: development
     container_name: app
+    env_file:
+      - .env.development
     ports:
-      - 8080:3000
+      - 3000:3000
     volumes:
       - .:/usr/src/app
       - node_modules:/usr/src/app/node_modules
   
   mongo:
     image: mongo
+    container_name: mongo_db
     ports:
       - '27017:27017'
 
