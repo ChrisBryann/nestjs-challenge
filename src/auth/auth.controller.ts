@@ -10,16 +10,43 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { Auth0AuthGuard } from './auth0.guard';
+import { Auth0AuthGuard } from './auth0_strategies/auth0.guard';
 import { ConfigService } from '@nestjs/config';
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { CurrentUserDecorator } from './current-user.decorator';
+import { User } from 'src/users/schema/user.schema';
+import { JwtRefreshAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigService,
   ) {}
+
+  @Post('login')
+  @UseGuards(LocalAuthGuard)
+  async login(
+    @CurrentUserDecorator() user: User,
+    @Res({
+      passthrough: true,
+    })
+    response: Response,
+  ) {
+    await this.authService.login(user, response);
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshToken(
+    @CurrentUserDecorator() user: User,
+    @Res({
+      passthrough: true,
+    })
+    response: Response,
+  ) {
+    await this.authService.login(user, response);
+  }
 
   // // Login route using local authentication strategy
   // @UseGuards(AuthGuard('local'))

@@ -18,8 +18,11 @@ services:
   mongo:
     image: mongo
     container_name: mongo_db
+    volumes:
+      - ./data/db:/data/db
+      - ./data/configdb:/data/configdb
     ports:
-      - '27017:27017'
+      - '27018:27017' # Exposing to port 27018 is only needed if the host is already running some PID on port 270107, which might be another Mongo instance. This answer may be confusing
 
 
 volumes:
