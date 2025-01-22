@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/schema/user.schema';
-import { AccessTokenPayload } from './interfaces/access-token-payload.interface';
+import { TokenPayload } from './interfaces/token-payload.interface';
 import { Response } from 'express';
 import { hash } from 'bcryptjs';
 
@@ -32,19 +32,19 @@ export class AuthService {
     }
   }
 
-  async verifyUserRefreshToken(refresh_token: string, user_id: string){
-    try{
+  async verifyUserRefreshToken(refresh_token: string, user_id: string) {
+    try {
       const user = await this.usersService.getUser({
-        _id: user_id
-      })
+        _id: user_id,
+      });
 
-      const authenticated = await compare(refresh_token, user.refreshToken)
+      const authenticated = await compare(refresh_token, user.refreshToken);
 
-      if(!authenticated) {
+      if (!authenticated) {
         throw new UnauthorizedException();
       }
       return user;
-    } catch(err) {
+    } catch (err) {
       throw new UnauthorizedException('Refresh token is not valid');
     }
   }
@@ -70,8 +70,9 @@ export class AuthService {
         ),
     );
 
-    const payload: AccessTokenPayload = {
+    const payload: TokenPayload = {
       user_id: user._id.toHexString(),
+      email: user.email,
     };
 
     const access_token = this.jwtService.sign(payload, {
