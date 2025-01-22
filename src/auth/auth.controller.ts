@@ -16,7 +16,7 @@ import { Request, Response } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUserDecorator } from './current-user.decorator';
 import { User } from 'src/users/schema/user.schema';
-import { JwtRefreshAuthGuard } from './guards/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleOAuthGuard } from './guards/google-oauth2.guard';
 
 @Controller('auth')

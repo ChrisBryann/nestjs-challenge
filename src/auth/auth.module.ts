@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { GoogleOAuthStrategy } from './strategies/google-oauth2.strategy';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
     AuthService,
     LocalStrategy,
     JwtStrategy,
-    JwtRefreshStrategy
+    JwtRefreshStrategy,
+    GoogleOAuthStrategy
   ],
   exports: [AuthService],
 })
