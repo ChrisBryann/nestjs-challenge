@@ -22,8 +22,8 @@ export class AuthService {
         email,
       });
 
-      const authtenticated = await compare(password, user.password);
-      if (!authtenticated) {
+      const authenticated = await compare(password, user.password);
+      if (!authenticated) {
         throw new UnauthorizedException();
       }
       return user;
@@ -38,7 +38,7 @@ export class AuthService {
         _id: user_id
       })
 
-      const authenticated = await compare(refresh_token, user.refresh_token)
+      const authenticated = await compare(refresh_token, user.refreshToken)
 
       if(!authenticated) {
         throw new UnauthorizedException();

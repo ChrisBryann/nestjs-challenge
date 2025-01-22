@@ -17,12 +17,11 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUserDecorator } from './current-user.decorator';
 import { User } from 'src/users/schema/user.schema';
 import { JwtRefreshAuthGuard } from './guards/jwt-auth.guard';
+import { GoogleOAuthGuard } from './guards/google-oauth2.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -45,6 +44,25 @@ export class AuthController {
     })
     response: Response,
   ) {
+    await this.authService.login(user, response);
+  }
+
+  // Login route through Google OAuth 2.0
+  @Get('google')
+  @UseGuards(GoogleOAuthGuard)
+  async googleLogin() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOAuthGuard)
+  async googleLoginCallback(
+    @CurrentUserDecorator() user: User,
+    @Res({
+      passthrough: true,
+    })
+    response: Response,
+  ) {
+    console.log(user);
+
     await this.authService.login(user, response);
   }
 
