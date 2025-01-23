@@ -15,15 +15,30 @@ services:
       - .:/usr/src/app
       - node_modules:/usr/src/app/node_modules
   
-  mongo:
-    image: mongo
-    container_name: mongo_db
-    volumes:
-      - ./data/db:/data/db
-      - ./data/configdb:/data/configdb
+  # mongo:
+  #   image: mongo
+  #   container_name: mongo_db
+  #   volumes:
+  #     - ./data/db:/data/db
+  #     - ./data/configdb:/data/configdb
+  #   ports:
+  #     - '27018:27017' # Exposing to port 27018 is only needed if the host is already running some PID on port 270107, which might be another Mongo instance. This answer may be confusing
+
+  mysql_db:
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: nestjs-challenge
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
     ports:
-      - '27018:27017' # Exposing to port 27018 is only needed if the host is already running some PID on port 270107, which might be another Mongo instance. This answer may be confusing
-
-
+      - 3306:3306
+    volumes:
+      - ./db/mysql/data:/var/lib/mysql
+      - ./db/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/mysql/my.cnf:/etc/mysql/my.cnf
+    
 volumes:
   node_modules:

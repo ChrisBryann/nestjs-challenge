@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schema/user.schema';
+// import { User } from './schema/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { hash } from 'bcryptjs';
 import { UsersRepository } from './users.repository';
+import { UsersTypeOrmRepository } from './users-typeorm.repository';
+import { User } from './entities/user.entity';
+import { DeepPartial, FindOneOptions } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: UsersRepository, private readonly usersTypeOrmRepository: UsersTypeOrmRepository) {}
 
   // async findOne(filterFn: (user: User) => boolean): Promise<User | undefined> {
   //     return this.users.find(filterFn)
@@ -22,27 +25,39 @@ export class UsersService {
   // }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    return await this.usersRepository.create({
+    // return await this.usersRepository.create({
+    //   ...data,
+    //   password: await hash(data.password, 10),
+    //   tokenVersion: 0,
+    // });
+    return await this.usersTypeOrmRepository.create({
       ...data,
-      password: await hash(data.password, 10),
-      tokenVersion: 0,
-    });
+      password: await hash(data.password, 10)
+    })
   }
 
-  async getUser(query: FilterQuery<User>) {
-    const user = await this.usersRepository.findOne(query);
-    if (!user) {
-      throw new NotFoundException('User not found!');
+  async getUser(query: FindOneOptions<User>) {
+    // const user = await this.usersRepository.findOne(query);
+    // if (!user) {
+    //   throw new NotFoundException('User not found!');
+    // }
+
+    // return user;
+
+    const user = await this.usersTypeOrmRepository.findOne(query)
+    if(!user) {
+      throw new NotFoundException('User not found!'); 
     }
 
     return user;
   }
 
   async getUsers() {
-    return this.usersRepository.find({});
+    return this.usersTypeOrmRepository.findAll({});
   }
 
-  async updateUser(query: FilterQuery<User>, data: UpdateQuery<User>) {
-    return this.usersRepository.findOneAndUpdate(query, data);
+  async updateUser(query: FindOneOptions<User>, data: DeepPartial<User>) {
+    // return this.usersRepository.findOneAndUpdate(query, data);
+    return this.usersTypeOrmRepository.findOneAndUpdate(query, data);
   }
 }

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Providers } from 'common/enums/provider.enum';
+import { Providers } from 'src/common/enums/provider.enum';
 import { SchemaTypes, Types } from 'mongoose';
 
 @Schema()
