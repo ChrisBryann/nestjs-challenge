@@ -1,0 +1,10 @@
+import { Controller, UseGuards } from '@nestjs/common';
+import { ProjectsService } from './projects.service';
+
+@Controller('projects')
+// @UseGuards(JwtAuthGuard)
+export class ProjectsController {
+  constructor(private readonly projectsService: ProjectsService) {}
+  
+
+}

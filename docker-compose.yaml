@@ -1,12 +1,31 @@
 version: '3.3'
 
 services:
-  app:
+  projects:
     build:
       context: .
-      dockerfile: Dockerfile
-      # target: development
-    container_name: app
+      dockerfile: ./apps/projects/Dockerfile
+      target: development
+    container_name: auth
+    command: npm run start:dev projects
+    env_file:
+      - .env.development
+    ports:
+      - 3001:3001
+    depends_on:
+      - auth
+      - mysql_db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    container_name: auth
+    command: npm run start:dev auth
     env_file:
       - .env.development
     ports:
@@ -40,5 +59,10 @@ services:
       - ./db/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db/mysql/my.cnf:/etc/mysql/my.cnf
     
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+
 volumes:
   node_modules:
