@@ -6,15 +6,15 @@ services:
       context: .
       dockerfile: ./apps/projects/Dockerfile
       target: development
-    container_name: auth
+    container_name: projects
     command: npm run start:dev projects
     env_file:
-      - .env.development
+      - ./apps/projects/.env.development
     ports:
       - 3001:3001
     depends_on:
       - auth
-      - mysql_db
+      - postgres_db
       - rabbitmq
     volumes:
       - .:/usr/src/app
@@ -27,9 +27,12 @@ services:
     container_name: auth
     command: npm run start:dev auth
     env_file:
-      - .env.development
+      - ./apps/auth/.env.development
     ports:
       - 3000:3000
+    depends_on:
+      - postgres_db
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - node_modules:/usr/src/app/node_modules
@@ -43,24 +46,45 @@ services:
   #   ports:
   #     - '27018:27017' # Exposing to port 27018 is only needed if the host is already running some PID on port 270107, which might be another Mongo instance. This answer may be confusing
 
-  mysql_db:
-    image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
+  # mysql_db:
+  #   image: mysql:8
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: password
+  #     MYSQL_DATABASE: nestjs-challenge
+  #     MYSQL_USER: user
+  #     MYSQL_PASSWORD: user_password
+  #   ports:
+  #     - 3306:3306
+  #   volumes:
+  #     - ./db/mysql/data:/var/lib/mysql
+  #     - ./db/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+  #     - ./db/mysql/my.cnf:/etc/mysql/my.cnf
+
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres_db
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: nestjs-challenge
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user_password
     ports:
-      - 3306:3306
+      - 5050:5432
+    environment:
+      - PGUSER=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=user1234
+      - POSTGRES_DB=nestjs-challenge
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$PGUSER"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
     volumes:
-      - ./db/mysql/data:/var/lib/mysql
-      - ./db/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./data/postgres_db:/var/lib/postgresql/data
+      # - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
     
   rabbitmq:
     image: rabbitmq
+    container_name: rabbitmq
     ports:
       - 5672:5672
 

@@ -1,4 +1,4 @@
-import { AbstractTypeOrmDocument } from "src/common/database/abstract-typeorm.schema";
+import { AbstractTypeOrmDocument } from "@app/common";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { Project } from "./project.entity";
 

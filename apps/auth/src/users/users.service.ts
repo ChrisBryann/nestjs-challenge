@@ -8,7 +8,7 @@ import { DeepPartial, FindOneOptions } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository, private readonly usersTypeOrmRepository: UsersTypeOrmRepository) {}
+  constructor(private readonly usersTypeOrmRepository: UsersTypeOrmRepository) {}
 
   // async findOne(filterFn: (user: User) => boolean): Promise<User | undefined> {
   //     return this.users.find(filterFn)

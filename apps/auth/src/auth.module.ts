@@ -9,10 +9,16 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { GoogleOAuthStrategy } from './strategies/google-oauth2.strategy';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from '@app/common';
 
 @Module({
   imports: [
-    CacheModule.register(),
+    ConfigModule.forRoot({
+      envFilePath: './apps/auth/.env.development',
+      isGlobal: true,
+    }),
+    DatabaseModule,
     PassportModule,
     JwtModule,
     UsersModule,
@@ -23,7 +29,7 @@ import { GoogleOAuthStrategy } from './strategies/google-oauth2.strategy';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshStrategy,
-    GoogleOAuthStrategy
+    GoogleOAuthStrategy,
   ],
   exports: [AuthService],
 })
