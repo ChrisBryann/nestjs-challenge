@@ -11,7 +11,7 @@ services:
     env_file:
       - ./apps/projects/.env.development
     ports:
-      - 3001:3001
+      - 3101:3000
     depends_on:
       - auth
       - postgres_db
@@ -29,7 +29,7 @@ services:
     env_file:
       - ./apps/auth/.env.development
     ports:
-      - 3000:3000
+      - 3100:3000
     depends_on:
       - postgres_db
       - rabbitmq
@@ -67,7 +67,7 @@ services:
     container_name: postgres_db
     restart: always
     ports:
-      - 5050:5432
+      - 5432:5432
     environment:
       - PGUSER=postgres
       - POSTGRES_USER=postgres
@@ -80,7 +80,19 @@ services:
       retries: 5
     volumes:
       - ./data/postgres_db:/var/lib/postgresql/data
-      # - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    restart: always
+    depends_on:
+      - postgres_db
     
   rabbitmq:
     image: rabbitmq
