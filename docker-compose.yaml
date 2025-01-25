@@ -79,7 +79,7 @@ services:
       timeout: 30s
       retries: 5
     volumes:
-      - ./data/postgres_db:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
       - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   pgadmin:
@@ -102,3 +102,6 @@ services:
 
 volumes:
   node_modules:
+
+  pgdata:
+    driver: local

@@ -1,21 +1,30 @@
-import { Providers } from "@app/common";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AbstractTypeOrmDocument, Providers } from "@app/common";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class User {
+export class User extends AbstractTypeOrmDocument {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 20,
+    })
     firstName: string;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 20,
+    })
     lastName: string;
 
     @Column({unique: true})
     email: string;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 20,
+    })
     password: string;
 
     @Column({
@@ -30,6 +39,22 @@ export class User {
     })
     tokenVersion?: number;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 255,
+    })
     refreshToken?: string;
+
+    @CreateDateColumn({
+        type: 'timestamp',
+        default: () => "CURRENT_TIMESTAMP(6)"
+    })
+    createdAt: Date;
+
+    @UpdateDateColumn({
+        type: 'timestamp',
+        default: () => "CURRENT_TIMESTAMP(6)",
+        onUpdate: "CURRENT_TIMESTAMP(6)"
+    })
+    updatedAt: Date;
 }

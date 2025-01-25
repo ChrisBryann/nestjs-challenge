@@ -3,10 +3,16 @@ import { Column, CreateDateColumn, Entity, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Project extends AbstractTypeOrmDocument {
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 100,
+    })
     name: string;
     
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 255,
+    })
     description: string;
 
     @CreateDateColumn({

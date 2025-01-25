@@ -10,10 +10,16 @@ export class Task extends AbstractTypeOrmDocument {
     @JoinColumn() // doesn't have a null column, so by default it is NOT NULL? also, this creates projectId column in database
     project: Project;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 100,
+    })
     name: string;
     
-    @Column()
+    @Column({
+        type: 'varchar',
+        length: 255,
+    })
     description: string;
 
     @CreateDateColumn({

@@ -12,10 +12,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.getOrThrow<string>('POSTGRES_USERNAME'),
         password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
         database: configService.getOrThrow<string>('POSTGRES_DB_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        migrations: [__dirname + '/migrations/*{.ts, .js}'],
+        entities: ['dist/**/*.entity{.ts,.js}'],
+        migrations: ['dist/migrations/*{.ts, .js}'],
         autoLoadEntities: true,
-        synchronize: true, // Set to false in production
+        synchronize: false, // Set to false in production
       }),
       inject: [ConfigService],
     }),
