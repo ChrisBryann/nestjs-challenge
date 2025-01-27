@@ -8,3 +8,6 @@ export * from './database/database.module';
 export * from './enums/provider.enum';
 
 export * from './interfaces/json-object.interface';
+
+export * from './auth/auth.module';
+export * from './auth/jwt-rmq.guard';

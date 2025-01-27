@@ -11,11 +11,30 @@ services:
     env_file:
       - ./apps/projects/.env.development
     ports:
-      - 3101:3000
+      - 3102:3000
     depends_on:
       - auth
+      - billing
       - postgres_db
       - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+  billing:
+    build:
+      context: .
+      dockerfile: ./apps/billing/Dockerfile
+      target: development
+    container_name: billing
+    command: npm run start:dev billing
+    env_file:
+      - ./apps/billing/.env.development
+    ports:
+      - 3101:3000
+    depends_on:
+      - postgres_db
+      - rabbitmq
+      - auth
     volumes:
       - .:/usr/src/app
       - node_modules:/usr/src/app/node_modules

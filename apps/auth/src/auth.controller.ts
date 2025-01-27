@@ -18,6 +18,8 @@ import { CurrentUserDecorator } from './current-user.decorator';
 import { User } from './users/entities/user.entity';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleOAuthGuard } from './guards/google-oauth2.guard';
+import { EventPattern } from '@nestjs/microservices';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -64,6 +66,13 @@ export class AuthController {
     console.log(user);
 
     await this.authService.login(user, response);
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @EventPattern('validate_user')
+  async validateUser(@CurrentUserDecorator() user: User) {
+    return user;
   }
 
   // // Login route using local authentication strategy

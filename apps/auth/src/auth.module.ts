@@ -11,6 +11,7 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { GoogleOAuthStrategy } from './strategies/google-oauth2.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@app/common';
+import { RmqModule } from '@app/common/rmq/rmq.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DatabaseModule } from '@app/common';
     PassportModule,
     JwtModule,
     UsersModule,
+    RmqModule,
   ],
   controllers: [AuthController],
   providers: [

@@ -1,12 +1,16 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RmqService } from './rmq.service';
 
 interface RmqModuleOptions {
   name: string;
 }
 
-@Module({})
+@Module({
+  providers: [RmqService],
+  exports: [RmqService],
+})
 export class RmqModule {
   // dynamic module
   static register({ name }: RmqModuleOptions): DynamicModule {
@@ -25,7 +29,7 @@ export class RmqModule {
                 ),
               },
             }),
-            imports: [ConfigService],
+            inject: [ConfigService],
           },
         ]),
       ],
