@@ -5,6 +5,7 @@ import { UsersRepository } from './users.repository';
 import { UsersTypeOrmRepository } from './users-typeorm.repository';
 import { User } from './entities/user.entity';
 import { DeepPartial, FindOneOptions } from 'typeorm';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,8 +35,21 @@ export class UsersService {
   }
 
   async createGoogleUser(data: CreateGoogleUserDto): Promise<User> {
-
+    return await this.usersTypeOrmRepository.create(data);
   } 
+
+  async getGoogleUser(googleId: string): Promise<User> {
+    const user = await this.usersTypeOrmRepository.findOne({
+      where: {
+        googleId,
+      }
+    })
+    if(!user) {
+      throw new NotFoundException('User is not affiliated with google or not found!'); 
+    }
+
+    return user;
+  }
 
   async getUser(query: FindOneOptions<User>) {
     // const user = await this.usersRepository.findOne(query);

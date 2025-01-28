@@ -49,6 +49,7 @@ export class User extends AbstractTypeOrmDocument {
     @Column({
         type: 'varchar',
         length: 255,
+        nullable: true,
     })
     refreshToken?: string;
 
