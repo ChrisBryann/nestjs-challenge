@@ -1,5 +1,5 @@
 import { AbstractTypeOrmDocument } from "@app/common";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { Project } from "./project.entity";
 
 @Entity()
@@ -35,4 +35,10 @@ export class Task extends AbstractTypeOrmDocument {
     })
     updatedAt: Date;
 
+    @DeleteDateColumn({
+        type: 'timestamp',
+        default: () => "CURRENT_TIMESTAMP(6)",
+        onUpdate: "CURRENT_TIMESTAMP(6)"
+    })
+    deletedAt: Date;
 }

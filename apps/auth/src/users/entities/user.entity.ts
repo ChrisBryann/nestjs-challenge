@@ -1,5 +1,5 @@
 import { AbstractTypeOrmDocument, Providers } from "@app/common";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class User extends AbstractTypeOrmDocument {
@@ -18,16 +18,23 @@ export class User extends AbstractTypeOrmDocument {
     })
     lastName: string;
 
+    @Column({
+        nullable: true,
+    })
+    googleId: string | null;
+
     @Column({unique: true})
     email: string;
 
     @Column({
         type: 'varchar',
         length: 20,
+        nullable: true,
     })
-    password: string;
+    password: string | null;
 
     @Column({
+        nullable: false,
         type: String,
         enum: Providers,
         default: Providers.None,
@@ -57,4 +64,11 @@ export class User extends AbstractTypeOrmDocument {
         onUpdate: "CURRENT_TIMESTAMP(6)"
     })
     updatedAt: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        default: () => "CURRENT_TIMESTAMP(6)",
+        onUpdate: "CURRENT_TIMESTAMP(6)"
+    })
+    deletedAt: Date;
 }

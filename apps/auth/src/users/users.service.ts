@@ -33,6 +33,10 @@ export class UsersService {
     })
   }
 
+  async createGoogleUser(data: CreateGoogleUserDto): Promise<User> {
+
+  } 
+
   async getUser(query: FindOneOptions<User>) {
     // const user = await this.usersRepository.findOne(query);
     // if (!user) {

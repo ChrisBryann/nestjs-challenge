@@ -1,5 +1,5 @@
 import { AbstractTypeOrmDocument } from "@app/common"
-import { Column, CreateDateColumn, Entity, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Project extends AbstractTypeOrmDocument {
@@ -27,4 +27,11 @@ export class Project extends AbstractTypeOrmDocument {
         onUpdate: "CURRENT_TIMESTAMP(6)"
     })
     updatedAt: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        default: () => "CURRENT_TIMESTAMP(6)",
+        onUpdate: "CURRENT_TIMESTAMP(6)"
+    })
+    deletedAt: Date;
 }

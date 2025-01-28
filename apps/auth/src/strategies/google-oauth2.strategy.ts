@@ -17,7 +17,7 @@ export class GoogleOAuthStrategy extends PassportStrategy(Strategy) {
     super({
       clientID: configService.getOrThrow<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.getOrThrow<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: `${configService.getOrThrow<string>('BASE_URL')}/auth/google/callback`,
+      callbackURL: `${configService.getOrThrow<string>('CLOUD_URL')}/auth/google/callback`,
       passReqToCallback: true,
       scope: ['email', 'profile'],
     });
@@ -40,11 +40,12 @@ export class GoogleOAuthStrategy extends PassportStrategy(Strategy) {
       });
     } catch (error) {
       // user is not found, create one
-      user = await this.usersService.createUser({
+      user = await this.usersService.createGoogleUser({
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
         email: profile.emails[0].value,
         provider: Providers.Google,
+        
       });
     }
     // return user to the request

@@ -63,7 +63,7 @@ export class AuthController {
     })
     response: Response,
   ) {
-    console.log(user);
+    console.log(`user google callback: ${user}`);
 
     await this.authService.login(user, response);
   }
