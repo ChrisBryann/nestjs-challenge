@@ -55,19 +55,6 @@ export class UsersService {
     return user;
   }
 
-  async getGoogleUser(googleId: string): Promise<User> {
-    const user = await this.usersTypeOrmRepository.findOne({
-      where: {
-        googleId,
-      }
-    })
-    if(!user) {
-      throw new NotFoundException('User is not affiliated with google or not found!'); 
-    }
-
-    return user;
-  }
-
   async getUser(query: FindOneOptions<User>) {
     // const user = await this.usersRepository.findOne(query);
     // if (!user) {
