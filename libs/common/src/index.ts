@@ -11,3 +11,7 @@ export * from './interfaces/json-object.interface';
 
 export * from './auth/auth.module';
 export * from './auth/jwt-rmq.guard';
+
+export * from './rmq/rmq.constant';
+export * from './rmq/rmq.module';
+export * from './rmq/rmq.service';

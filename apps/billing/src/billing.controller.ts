@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { BillingService } from './billing.service';
 import { JwtRmqGuard } from '@app/common/auth/jwt-rmq.guard';
-import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { RmqService } from '@app/common/rmq/rmq.service';
 
 @Controller()
@@ -17,7 +17,7 @@ export class BillingController {
   }
 
   @UseGuards(JwtRmqGuard)
-  @EventPattern('project_created')
+  @MessagePattern('project_created')
   handleProjectCreated(@Payload() data: any, @Ctx() context: RmqContext) {
     this.billingService.bill(data);
     this.rmqService.ack(context);

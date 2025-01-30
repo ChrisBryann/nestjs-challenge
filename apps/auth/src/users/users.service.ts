@@ -5,10 +5,13 @@ import { UsersRepository } from './users.repository';
 import { UsersTypeOrmRepository } from './users-typeorm.repository';
 import { User } from './entities/user.entity';
 import { DeepPartial, FindOneOptions } from 'typeorm';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersTypeOrmRepository: UsersTypeOrmRepository) {}
+  constructor(
+    private readonly usersTypeOrmRepository: UsersTypeOrmRepository,
+  ) {}
 
   // async findOne(filterFn: (user: User) => boolean): Promise<User | undefined> {
   //     return this.users.find(filterFn)
@@ -27,15 +30,30 @@ export class UsersService {
     //   password: await hash(data.password, 10),
     //   tokenVersion: 0,
     // });
-    return await this.usersTypeOrmRepository.create({
+    const user = this.usersTypeOrmRepository.create({
       ...data,
-      password: await hash(data.password, 10)
-    })
+      password: await hash(data.password, 10),
+    });
+    return await this.usersTypeOrmRepository.save(user);
   }
 
   async createGoogleUser(data: CreateGoogleUserDto): Promise<User> {
+    const googleUser = this.usersTypeOrmRepository.create(data);
+    return await this.usersTypeOrmRepository.save(googleUser);
+  }
 
-  } 
+  async getGoogleUser(googleId: string): Promise<User> {
+    const user = await this.usersTypeOrmRepository.findOneBy({
+      googleId,
+    });
+    if (!user) {
+      throw new NotFoundException(
+        'User is not affiliated with google or not found!',
+      );
+    }
+
+    return user;
+  }
 
   async getUser(query: FindOneOptions<User>) {
     // const user = await this.usersRepository.findOne(query);
@@ -45,16 +63,18 @@ export class UsersService {
 
     // return user;
 
-    const user = await this.usersTypeOrmRepository.findOne(query)
-    if(!user) {
-      throw new NotFoundException('User not found!'); 
+    const user = await this.usersTypeOrmRepository.findOne(query);
+    if (!user) {
+      throw new NotFoundException('User not found!');
     }
 
     return user;
   }
 
   async getUsers() {
-    return this.usersTypeOrmRepository.findAll({});
+    return this.usersTypeOrmRepository.findAll({
+      
+    });
   }
 
   async updateUser(query: FindOneOptions<User>, data: DeepPartial<User>) {

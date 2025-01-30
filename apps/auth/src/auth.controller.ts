@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -18,12 +19,20 @@ import { CurrentUserDecorator } from './current-user.decorator';
 import { User } from './users/entities/user.entity';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleOAuthGuard } from './guards/google-oauth2.guard';
-import { EventPattern } from '@nestjs/microservices';
+import { MessagePattern } from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CreateUserDto } from './users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('register')
+  async register(@Body() registerUserDto: CreateUserDto){
+    const { password: _, ...user } = await this.authService.register(registerUserDto);
+
+    return user;
+  }
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -63,14 +72,13 @@ export class AuthController {
     })
     response: Response,
   ) {
-    console.log(`user google callback: ${user}`);
 
     await this.authService.login(user, response);
   }
 
 
   @UseGuards(JwtAuthGuard)
-  @EventPattern('validate_user')
+  @MessagePattern('validate_user')
   async validateUser(@CurrentUserDecorator() user: User) {
     return user;
   }

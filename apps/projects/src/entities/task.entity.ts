@@ -22,6 +22,12 @@ export class Task extends AbstractTypeOrmDocument {
     })
     description: string;
 
+    @Column({
+        type: 'uuid'
+    })
+    createdBy: string;
+
+
     @CreateDateColumn({
         type: 'timestamp',
         default: () => "CURRENT_TIMESTAMP(6)"
@@ -37,7 +43,7 @@ export class Task extends AbstractTypeOrmDocument {
 
     @DeleteDateColumn({
         type: 'timestamp',
-        default: () => "CURRENT_TIMESTAMP(6)",
+        default: null, // cannot have a default value since it will causepostgres to assume it has been deleted
         onUpdate: "CURRENT_TIMESTAMP(6)"
     })
     deletedAt: Date;

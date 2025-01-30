@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DatabaseModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
+import { ProjectsTypeormRepository } from './projects-typeorm.repository';
 
 @Module({
   controllers: [ProjectsController],
-  providers: [ProjectsService],
+  providers: [ProjectsService, ProjectsTypeormRepository],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,

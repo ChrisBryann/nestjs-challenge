@@ -7,27 +7,28 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, Observable, tap } from 'rxjs';
+import { AUTH_SERVICE } from '../rmq/rmq.constant';
 
 @Injectable()
 export class JwtRmqGuard implements CanActivate {
-  constructor(@Inject('AUTH') private readonly authClient: ClientProxy) {}
+  constructor(@Inject(AUTH_SERVICE) private readonly authClient: ClientProxy) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const authentication = this.getAuthentication(context);
-
     return this.authClient
       .send('validate_user', {
-        Auththentication: authentication,
+        cookies: { Authentication: authentication },
       })
       .pipe(
         tap((res) => {
           this.addUser(res, context);
         }),
-        catchError(err => {
-            throw new UnauthorizedException();
-        })
+        catchError((err) => {
+          console.log(`JwtRmqGuard unauthorized: ${err}`);
+          throw new UnauthorizedException();
+        }),
       );
   }
 

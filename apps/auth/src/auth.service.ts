@@ -7,6 +7,8 @@ import { User } from './users/entities/user.entity';
 import { TokenPayload } from './interfaces/token-payload.interface';
 import { Response } from 'express';
 import { hash } from 'bcryptjs';
+import { register } from 'module';
+import { CreateUserDto } from './users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,6 +79,8 @@ export class AuthService {
     const payload: TokenPayload = {
       user_id: user.id,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
     };
 
     const access_token = this.jwtService.sign(payload, {
@@ -119,6 +123,10 @@ export class AuthService {
       secure: this.configService.get('NODE_ENV') === 'production',
       expires: refresh_token_expires,
     });
+  }
+
+  async register(registerUserDto: CreateUserDto) {
+    return await this.usersService.createUser(registerUserDto);
   }
 }
 

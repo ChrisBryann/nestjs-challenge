@@ -24,7 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  // validate(payload: unknown): unknown {
+  validate(payload: unknown) {
   //   return payload;
   // }
   // async validate(username: string, password: string): Promise<any> {
@@ -36,5 +36,5 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   //   }
 
   //   return user;
-  // }
+  }
 }

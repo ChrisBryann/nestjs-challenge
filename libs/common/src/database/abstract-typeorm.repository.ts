@@ -1,7 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AbstractTypeOrmDocument } from './abstract-typeorm.schema';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  DeepPartial,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { AbstractTypeOrmInterfaceRepository } from './abstract-typeorm.interface';
 
 @Injectable()
@@ -27,22 +33,34 @@ export abstract class AbstractTypeOrmRepository<
     return this.repository.create(data);
   }
 
-  public async findOneById(id: any): Promise<TDocument> {
+  public async findOneById(id: any): Promise<TDocument | null> {
     const options: FindOptionsWhere<TDocument> = {
       id: id,
     };
     return await this.repository.findOneBy(options);
   }
 
-  public async findOne(filterCondition: FindOneOptions<TDocument>): Promise<TDocument> {
+  public async findOne(
+    filterCondition: FindOneOptions<TDocument>,
+  ): Promise<TDocument | null> {
     return await this.repository.findOne(filterCondition);
   }
 
-  public async findWithRelations(relations: FindManyOptions<TDocument>): Promise<TDocument[]> {
+  public async findOneBy(
+    whereCondition: FindOptionsWhere<TDocument>,
+  ): Promise<TDocument | null> {
+    return await this.repository.findOneBy(whereCondition);
+  }
+
+  public async findWithRelations(
+    relations: FindManyOptions<TDocument>,
+  ): Promise<TDocument[] | null> {
     return await this.repository.find(relations);
   }
 
-  public async findAll(options?: FindManyOptions<TDocument>): Promise<TDocument[]> {
+  public async findAll(
+    options?: FindManyOptions<TDocument>,
+  ): Promise<TDocument[] | null> {
     return await this.repository.find(options);
   }
 
@@ -54,13 +72,18 @@ export abstract class AbstractTypeOrmRepository<
     return await this.repository.preload(entityLike);
   }
 
-  public async findOneAndUpdate(options: FindOneOptions<TDocument>, update: DeepPartial<TDocument>): Promise<TDocument> {
+  public async findOneAndUpdate(
+    options: FindOneOptions<TDocument>,
+    update: DeepPartial<TDocument>,
+  ): Promise<TDocument> {
     const document = await this.repository.findOne(options);
-    if(!document) {
-        throw new NotFoundException('Document not found.');
+    if (!document) {
+      throw new NotFoundException('Document not found.');
     }
 
-    return await this.repository.save(update);
-
+    return await this.repository.save({
+      id: document.id,
+      ...update,
+    });
   }
 }

@@ -3,7 +3,6 @@ import { User } from "apps/auth/src/users/entities/user.entity";
 import { Project } from "apps/projects/src/entities/project.entity";
 import { Task } from "apps/projects/src/entities/task.entity";
 import { config } from "dotenv";
-import { join } from "path";
 import { DataSource } from "typeorm";
 
 config({
