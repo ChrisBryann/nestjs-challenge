@@ -23,7 +23,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: TokenPayload) {
-    return this.usersService.getUser({
+    console.log(`jwt auth validate works: ${payload.email}`)
+    return await this.usersService.getUser({
       where: {
         id: payload.user_id,
       },

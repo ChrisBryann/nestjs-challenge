@@ -7,6 +7,7 @@ export interface AbstractTypeOrmInterfaceRepository<T> {
     saveMany(data: DeepPartial<T>[]): Promise<T[]>
     findOneById(id: string): Promise<T>
     findOne(filterCondition: FindOneOptions<T>): Promise<T>;
+    findOneBy(whereCondition: FindOptionsWhere<T>): Promise<T>;
     findAll(options?: FindManyOptions<T>): Promise<T[]>
     remove(data: T): Promise<T>
     findWithRelations(relations: FindManyOptions<T>): Promise<T[]>
