@@ -119,6 +119,12 @@ services:
     ports:
       - 5672:5672
 
+  bullmq:
+    image: redis
+    container_name: bullmq
+    ports:
+      - 6379:6379
+
 volumes:
   node_modules:
 

@@ -14,11 +14,17 @@ import { CurrentUserDecorator } from 'apps/auth/src/current-user.decorator';
 import { User } from 'apps/auth/src/users/entities/user.entity';
 import { AddTaskDto } from './dto/add-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { TASK_QUEUE } from '@app/common/bullmq/bullmq.constant';
+import { Queue } from 'bullmq';
 
 @Controller('projects/:projectId/tasks')
 @UseGuards(JwtRmqGuard)
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+    @InjectQueue(TASK_QUEUE) private tasksQueue: Queue,
+  ) {}
 
   @Get()
   async getAllTasks(
@@ -34,7 +40,11 @@ export class TasksController {
     @Param('projectId') projectId: string,
     @Body() addTaskDto: AddTaskDto,
   ) {
-    return await this.tasksService.addTask(user.id, projectId, addTaskDto);
+    return await this.tasksQueue.add('add_task', {
+      userId: user.id,
+      projectId,
+      addTaskDto,
+    });
   }
 
   @Put('/:taskId')
@@ -58,6 +68,10 @@ export class TasksController {
     @Param('projectId') projectId: string,
     @Param('taskId') taskId: string,
   ) {
-    return await this.tasksService.deleteTask(user.id, projectId, taskId);
+    return await this.tasksQueue.add('delete_task', {
+      userId: user.id,
+      projectId,
+      taskId,
+    });
   }
 }
