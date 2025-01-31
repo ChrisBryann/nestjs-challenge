@@ -37,7 +37,6 @@ export class User extends AbstractTypeOrmDocument {
 
   @Column({
     type: 'varchar',
-    length: 20,
     nullable: true,
     select: false, // prevent this column/field to be selected when using find or QueryBuilder
   })

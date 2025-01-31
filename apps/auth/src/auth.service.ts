@@ -32,7 +32,7 @@ export class AuthService {
       }
       return user;
     } catch (err) {
-      throw new UnauthorizedException('Credentials are not valid!');
+      throw new UnauthorizedException(err);
     }
   }
 
