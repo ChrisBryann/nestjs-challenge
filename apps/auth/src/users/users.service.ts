@@ -25,7 +25,7 @@ export class UsersService {
   // }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    if(this.usersTypeOrmRepository.findOneBy({
+    if(await this.usersTypeOrmRepository.findOneBy({
       email: data.email,
     })) {
       throw new ForbiddenException('User already exists!')
