@@ -2,10 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TasksTypeOrmRepository } from './tasks-typeorm.repository';
 import { AddTaskDto } from './dto/add-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { TASK_QUEUE } from '@app/common/bullmq/bullmq.constant';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class TasksService {
-  constructor(private readonly tasksRepository: TasksTypeOrmRepository) {}
+  constructor(
+    private readonly tasksRepository: TasksTypeOrmRepository,
+    @InjectQueue(TASK_QUEUE) private readonly tasksQueue: Queue,
+  ) {}
 
   async getAllTasks(userId: string, projectId: string) {
     return await this.tasksRepository.findAll({
@@ -22,15 +28,11 @@ export class TasksService {
   }
 
   async addTask(userId: string, projectId: string, addTaskDto: AddTaskDto) {
-    const task = await this.tasksRepository.create({
-      ...addTaskDto,
-      createdBy: userId,
-      project: {
-        id: projectId,
-      },
+    return await this.tasksQueue.add('add_task', {
+      userId,
+      projectId,
+      addTaskDto,
     });
-
-    return await this.tasksRepository.save(task);
   }
 
   async updateTask(
@@ -57,23 +59,10 @@ export class TasksService {
   }
 
   async deleteTask(userId: string, projectId: string, taskId: string) {
-    const task = await this.tasksRepository.findOne({
-      where: {
-        id: taskId,
-        createdBy: userId,
-        project: {
-          id: projectId,
-        },
-      },
-      relations: {
-        project: true,
-      },
+    await this.tasksQueue.add('delete_task', {
+      userId: userId,
+      projectId,
+      taskId,
     });
-
-    if (!task) {
-      throw new NotFoundException('Task does not exist!');
-    }
-
-    await this.tasksRepository.remove(task);
   }
 }

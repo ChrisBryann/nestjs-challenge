@@ -13,8 +13,7 @@ import { TasksConsumer } from './tasks.consumer';
   imports: [
     TypeOrmModule.forFeature([Task]),
     AuthModule,
-    BullQueueModule,
-    BullQueueModule.register([TASK_QUEUE]),
+    BullQueueModule.register([TASK_QUEUE])
   ],
   controllers: [TasksController],
   providers: [TasksService, TasksTypeOrmRepository, TasksConsumer],

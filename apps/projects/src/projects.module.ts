@@ -7,6 +7,7 @@ import { Project } from './entities/project.entity';
 import { DatabaseModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { ProjectsTypeormRepository } from './projects-typeorm.repository';
+import { BullQueueModule } from '@app/common/bullmq/bullmq.module';
 
 @Module({
   controllers: [ProjectsController],
@@ -19,6 +20,7 @@ import { ProjectsTypeormRepository } from './projects-typeorm.repository';
     TasksModule,
     TypeOrmModule.forFeature([Project]),
     DatabaseModule,
+    BullQueueModule,
   ],
 })
 export class ProjectsModule {}

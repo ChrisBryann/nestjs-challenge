@@ -1,13 +1,13 @@
 import { TASK_QUEUE } from '@app/common/bullmq/bullmq.constant';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { config } from 'dotenv';
-import { TasksService } from './tasks.service';
 import { AddTaskDto } from './dto/add-task.dto';
+import { TasksTypeOrmRepository } from './tasks-typeorm.repository';
+import { NotFoundException } from '@nestjs/common';
 
 @Processor(TASK_QUEUE)
 export class TasksConsumer extends WorkerHost {
-  constructor(private readonly tasksService: TasksService) {
+  constructor(private readonly tasksRepository: TasksTypeOrmRepository) {
     super();
   }
   @OnWorkerEvent('active')
@@ -25,13 +25,15 @@ export class TasksConsumer extends WorkerHost {
           projectId: string;
           addTaskDto: AddTaskDto;
         };
-        const task = await this.tasksService.addTask(
-          userId,
-          projectId,
-          addTaskDto,
-        );
-
-        return task;
+        const task = await this.tasksRepository.create({
+          ...addTaskDto,
+          createdBy: userId,
+          project: {
+            id: projectId,
+          },
+        });
+    
+        return await this.tasksRepository.save(task);
       }
       case 'delete_task': {
         const { userId, projectId, taskId } = job.data as {
@@ -40,7 +42,24 @@ export class TasksConsumer extends WorkerHost {
           taskId: string;
         };
 
-        await this.tasksService.deleteTask(userId, projectId, taskId);
+        const task = await this.tasksRepository.findOne({
+          where: {
+            id: taskId,
+            createdBy: userId,
+            project: {
+              id: projectId,
+            },
+          },
+          relations: {
+            project: true,
+          },
+        });
+    
+        if (!task) {
+          throw new NotFoundException('Task does not exist!');
+        }
+    
+        await this.tasksRepository.remove(task);
 
         break;
       }

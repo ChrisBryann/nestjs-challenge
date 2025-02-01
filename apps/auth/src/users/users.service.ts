@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'bcryptjs';
 import { UsersRepository } from './users.repository';
@@ -25,11 +25,11 @@ export class UsersService {
   // }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    // return await this.usersRepository.create({
-    //   ...data,
-    //   password: await hash(data.password, 10),
-    //   tokenVersion: 0,
-    // });
+    if(this.usersTypeOrmRepository.findOneBy({
+      email: data.email,
+    })) {
+      throw new ForbiddenException('User already exists!')
+    }
     const user = this.usersTypeOrmRepository.create({
       ...data,
       password: await hash(data.password, 10),

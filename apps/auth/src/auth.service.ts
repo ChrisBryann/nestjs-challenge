@@ -24,11 +24,14 @@ export class AuthService {
         where: {
           email,
         },
+        select: {
+          password: true,
+        }
       });
 
       const authenticated = await compare(password, user.password);
       if (!authenticated) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Password does not match!');
       }
       return user;
     } catch (err) {
