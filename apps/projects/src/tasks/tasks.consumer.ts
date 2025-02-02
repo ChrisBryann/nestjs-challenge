@@ -17,6 +17,13 @@ export class TasksConsumer extends WorkerHost {
     );
   }
 
+  @OnWorkerEvent('completed')
+  onCompleted(job: Job) {
+    console.log(
+      `Completed job ${job.id} of type ${job.name} with data ${job.data}...`,
+    );
+  }
+
   async process(job: Job, token?: string): Promise<any> {
     switch (job.name) {
       case 'add_task': {

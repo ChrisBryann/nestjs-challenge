@@ -1,6 +1,7 @@
 import {
     IsEmail,
     IsEnum,
+    IsNotEmpty,
     IsOptional,
     IsString,
     IsStrongPassword,
@@ -11,19 +12,24 @@ import {
   
   export class CreateGoogleUserDto {
     @IsUUID()
+    @IsNotEmpty()
     googleId: string;
 
     @IsString()
+    @IsNotEmpty()
     firstName: string;
   
     @IsString()
+    @IsNotEmpty()
     lastName: string;
   
     @IsEnum(Providers)
     @IsString()
+    @IsNotEmpty()
     provider: Providers;
   
     @IsEmail()
+    @IsNotEmpty()
     email: string;
   }
   
