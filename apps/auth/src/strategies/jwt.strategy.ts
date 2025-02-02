@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import { UsersService } from '../users/users.service';
+import { JwtPayload } from 'jsonwebtoken';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,8 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: TokenPayload) {
-    console.log(`jwt auth validate works: ${payload.email}`)
+  async validate(payload: JwtPayload) {
     return await this.usersService.getUser({
       where: {
         id: payload.user_id,

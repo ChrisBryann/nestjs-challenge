@@ -20,20 +20,24 @@ export class AuthService {
 
   async verifyUser(email: string, password: string) {
     try {
-      const user = await this.usersService.getUser({
+      const { password: userPassword } = await this.usersService.getUser({
         where: {
           email,
         },
         select: {
           password: true,
-        }
+        },
       });
 
-      const authenticated = await compare(password, user.password);
+      const authenticated = await compare(password, userPassword);
       if (!authenticated) {
         throw new UnauthorizedException('Password does not match!');
       }
-      return user;
+      return await this.usersService.getUser({
+        where: {
+          email,
+        },
+      });
     } catch (err) {
       throw new UnauthorizedException(err);
     }
@@ -81,9 +85,6 @@ export class AuthService {
 
     const payload: TokenPayload = {
       user_id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
     };
 
     const access_token = this.jwtService.sign(payload, {

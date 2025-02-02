@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -11,6 +12,7 @@ import { AUTH_SERVICE } from '../rmq/rmq.constant';
 
 @Injectable()
 export class JwtRmqGuard implements CanActivate {
+  private readonly logger: Logger = new Logger(JwtRmqGuard.name);
   constructor(@Inject(AUTH_SERVICE) private readonly authClient: ClientProxy) {}
 
   canActivate(
@@ -26,7 +28,7 @@ export class JwtRmqGuard implements CanActivate {
           this.addUser(res, context);
         }),
         catchError((err) => {
-          console.log(`JwtRmqGuard unauthorized: ${err}`);
+          this.logger.log(`JwtRmqGuard unauthorized: ${JSON.stringify(err)}`);
           throw new UnauthorizedException();
         }),
       );

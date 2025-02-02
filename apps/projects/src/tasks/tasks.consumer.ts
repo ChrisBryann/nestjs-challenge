@@ -1,26 +1,42 @@
 import { TASK_QUEUE } from '@app/common/bullmq/bullmq.constant';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { Job } from 'bullmq';
+import { ErrorCode, Job } from 'bullmq';
 import { AddTaskDto } from './dto/add-task.dto';
 import { TasksTypeOrmRepository } from './tasks-typeorm.repository';
-import { NotFoundException } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
+import { ErrorDescription } from 'typeorm';
 
 @Processor(TASK_QUEUE)
 export class TasksConsumer extends WorkerHost {
+  private readonly logger: Logger = new Logger(TasksConsumer.name);
   constructor(private readonly tasksRepository: TasksTypeOrmRepository) {
     super();
   }
   @OnWorkerEvent('active')
   onActive(job: Job) {
-    console.log(
+    this.logger.log(
       `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
     );
   }
 
   @OnWorkerEvent('completed')
   onCompleted(job: Job) {
-    console.log(
+    this.logger.log(
       `Completed job ${job.id} of type ${job.name} with data ${job.data}...`,
+    );
+  }
+
+  @OnWorkerEvent('failed')
+  onFailed(job: Job, error: any) {
+    this.logger.log(
+      `Job ${job.id} of type ${job.name} with data ${job.data} has failed.\nError details: ${JSON.stringify(error)}`,
+    );
+  }
+
+  @OnWorkerEvent('error')
+  onError(failedReason: any) {
+    this.logger.log(
+      `Error occured while running job: ${JSON.stringify(failedReason)}.`,
     );
   }
 
@@ -39,7 +55,7 @@ export class TasksConsumer extends WorkerHost {
             id: projectId,
           },
         });
-    
+
         return await this.tasksRepository.save(task);
       }
       case 'delete_task': {
@@ -61,11 +77,11 @@ export class TasksConsumer extends WorkerHost {
             project: true,
           },
         });
-    
+
         if (!task) {
           throw new NotFoundException('Task does not exist!');
         }
-    
+
         await this.tasksRepository.remove(task);
 
         break;
