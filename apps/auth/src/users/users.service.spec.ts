@@ -8,7 +8,7 @@ import { Providers } from '@app/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { FindOneOptions } from 'typeorm';
+import { DeepPartial, FindOneOptions } from 'typeorm';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -234,8 +234,25 @@ describe('UsersService', () => {
         id: 'abc1234',
       },
     };
-    it('should call updateUser with corret data', async () => {
-
+    const mockUpdateData: DeepPartial<User> = {
+      firstName: 'Chris'
+    }
+    it('should call usersRepository.findOneAndUpdate with correct params', async () => {
+      await service.updateUser(mockQuery, mockUpdateData);
+      expect(usersRepository.findOneAndUpdate).toHaveBeenCalledWith(mockQuery, mockUpdateData);
     })
+
+    it('should update user\'s firstName to Chris from Christopher', async () => {
+      jest.spyOn(usersRepository, 'findOneAndUpdate').mockImplementation((query, data) => Promise.resolve({
+        ...mockFullUserData,
+        firstName: data.firstName,
+      }))
+      const result = await service.updateUser(mockQuery, mockUpdateData);
+      expect(result.firstName).toBe('Chris');
+    })
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks();
   })
 });
